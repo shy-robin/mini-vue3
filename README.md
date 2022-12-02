@@ -129,3 +129,30 @@ if (!commitRE.test(msg)) {
   process.exit(1)
 }
 ```
+
+#### 添加 EsLint
+
+安装包：`yarn add -D -W eslint @typescript-eslint/parser`
+
+在根目录下创建配置文件 .eslintrc.js 文件，写入配置：
+
+```js
+module.exports = {
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+  },
+  extends: ['airbnb-base'], // 使用 airbnb 风格
+  rules: {
+    // 覆盖规则
+    semi: 0,
+  },
+}
+```
+
+安装包：`yarn add -D -W eslint-config-airbnb-base`
+
+查找 peer 包：`yarn info eslint-config-airbnb-base peerDependencies`
+
+安装依赖列表即可（这里需要额外安装 eslint-plugin-import 包）
