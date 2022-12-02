@@ -59,3 +59,73 @@ yarn init -y
 #### 添加其他包
 
 `yarn add -D -W rollup rollup-plugin-typescript2 @rollup/plugin-node-resolve @rollup/plugin-json execa`
+
+#### 代码格式化
+
+安装第三方包：
+
+```zsh
+yarn add -D -W yorkie lint-staged prettier chalk
+```
+
+其中，yorkie 用于实现 gitHooks，lint-staged 用于实现对所有暂存文件进行操作，prettier 用于对代码进行检查或格式化，chalk 用于修改终端文字显示样式（注意最新版本不支持 require 导入，需切换成 ^4.1.0）。
+
+修改 package.json 文件：
+
+```json
+  "gitHooks": {
+    "pre-commit": "lint-staged", // 提交之前，操作暂存文件
+    "commit-msg": "node scripts/verifyCommit.js" // 提交时，校验 commit message
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write" // 格式化所有 js 文件
+    ],
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write" // 格式化所有 ts、tsx 文件，使用 typescript 解析器
+    ]
+  },
+```
+
+创建 .prettier.json 文件，自定义代码风格：
+
+```json
+{
+  "semi": false,
+  "singleQuote": true,
+  "printWidth": 80,
+  "trailingComma": "none",
+  "arrowParens": "avoid"
+}
+```
+
+创建 scripts/verifyCommit.js 文件，验证提交信息：
+
+```js
+// Invoked on the commit-msg git hook by yorkie.
+
+const chalk = require('chalk')
+const msgPath = process.env.GIT_PARAMS
+const msg = require('fs').readFileSync(msgPath, 'utf-8').trim()
+
+const commitRE =
+  /^(revert: )?(feat|fix|docs|dx|style|refactor|perf|test|workflow|build|ci|chore|types|wip|release)(\(.+\))?: .{1,50}/
+
+if (!commitRE.test(msg)) {
+  console.log()
+  console.error(
+    `  ${chalk.bgRed.white(' ERROR ')} ${chalk.red(
+      `invalid commit message format.`
+    )}\n\n` +
+      chalk.red(
+        `  Proper commit message format is required for automated changelog generation. Examples:\n\n`
+      ) +
+      `    ${chalk.green(`feat(compiler): add 'comments' option`)}\n` +
+      `    ${chalk.green(
+        `fix(v-model): handle events on blur (close #28)`
+      )}\n\n` +
+      chalk.red(`  See .github/commit-convention.md for more details.\n`)
+  )
+  process.exit(1)
+}
+```
