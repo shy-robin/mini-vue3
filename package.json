@@ -8,6 +8,9 @@
   "main": "index.js",
   "author": "ShyRobin <shy_robin@163.com>",
   "license": "MIT",
+  "scripts": {
+    "lint": "eslint --ext .ts packages/**/*.ts"
+  },
   "gitHooks": {
     "pre-commit": "lint-staged",
     "commit-msg": "node scripts/verifyCommit.js"

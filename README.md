@@ -156,3 +156,15 @@ module.exports = {
 查找 peer 包：`yarn info eslint-config-airbnb-base peerDependencies`
 
 安装依赖列表即可（这里需要额外安装 eslint-plugin-import 包）
+
+#### 添加 lint 脚本
+
+在 package.json 中添加：
+
+```json
+"scripts": {
+  "lint": "eslint --ext .ts packages/**/*.ts"
+},
+```
+
+其中，`**` 表示匹配所有目录（包括子目录），`*` 表示匹配所有文件，所以 `packages/**/*.ts` 表示匹配 packages 文件夹下所有 ts 文件。
